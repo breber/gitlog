@@ -7,62 +7,26 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 
-public class CommitsByMonth extends HtmlPage {
+import org.json.JSONArray;
+import org.json.JSONException;
+
+public class CommitsByMonth extends LineChartPage {
 
 
 	public CommitsByMonth(String projectTitle) {
 		super(projectTitle, "commitsmonth.html", "Commits By Month");
 	}
 
-	@Override
-	protected String generateBody(List<Commit> commits) {
-		System.out.println("generateBody");
-		StringBuilder sb = new StringBuilder();
-
-		List<String> users = new ArrayList<String>();
-		HashMap<String, Data> data = parseData(commits, users);
-
-		System.out.println("parsedData");
-
-		sb.append("google.load('visualization', '1.0', { 'packages':['corechart'] });");
-		sb.append("google.setOnLoadCallback(drawChart);");
-
-		sb.append("function drawChart() {\n");
-
-		sb.append("var data = new google.visualization.arrayToDataTable([");
-		sb.append("['Date'");
-
-		for (String s : users) {
-			sb.append(", '" + s + "'");
-		}
-
-		sb.append("],");
-
-		List<String> tmp = new ArrayList<String>(data.keySet());
-		Collections.sort(tmp);
-		for (String s : tmp) {
-			Data d = data.get(s);
-
-			sb.append("['" + s + "'");
-
-			for (String usr : users) {
-				sb.append(", " + d.data.get(usr) + "");
-			}
-			sb.append("],");
-		}
-
-		sb.append("]);");
-
-		sb.append("var chart = new google.visualization.LineChart(document.getElementById('chart_div'));");
-		sb.append("chart.draw(data);");
-
-		sb.append("};");
-
-		return sb.toString();
+	private class Data {
+		public HashMap<String, Integer> data = new HashMap<String, Integer>();
 	}
 
-	private HashMap<String, Data> parseData(List<Commit> commits, List<String> users) {
-		HashMap<String, Data> toRet = new HashMap<String, Data>();
+	@Override
+	protected JSONArray parseData(List<Commit> commits) throws JSONException {
+		JSONArray data = new JSONArray();
+		JSONArray names = new JSONArray();
+		List<String> users = new ArrayList<String>();
+		HashMap<String, Data> monthToCommits = new HashMap<String, Data>();
 
 		Collections.sort(commits, new Comparator<Commit>() {
 			@Override
@@ -71,22 +35,34 @@ public class CommitsByMonth extends HtmlPage {
 			}
 		});
 
-		Calendar c = Calendar.getInstance();
+		// Add the title of the axis to the array first
+		names.put("Month");
+
+		// Add the names to our JSONArray
+		for (Commit c : commits) {
+			// Add the user to the list of users
+			if (!users.contains(c.getAuthorName())) {
+				names.put(c.getAuthorName());
+				users.add(c.getAuthorName());
+			}
+		}
+
+		// add the names to the return JSONArray
+		data.put(names);
+
+		Calendar calendar = Calendar.getInstance();
 		int index = 0;
 
 		while (index < commits.size()) {
 			Commit tmp = commits.get(index);
 
-			// Add the user to the list of users
-			if (!users.contains(tmp.getAuthorName())) {
-				users.add(tmp.getAuthorName());
-			}
+			// Get an instance of the time of the commit
+			calendar.setTime(tmp.getDate());
+			String key = calendar.get(Calendar.YEAR) + " / " + (calendar.get(Calendar.MONTH) + 1);
 
-			//
-			c.setTime(tmp.getDate());
-			String key = c.get(Calendar.YEAR) + " / " + (c.get(Calendar.MONTH) + 1);
-			if (toRet.containsKey(key)){
-				Data d = toRet.get(key);
+			// If we already have this month follow this path
+			if (monthToCommits.containsKey(key)){
+				Data d = monthToCommits.get(key);
 				Integer i = d.data.get(tmp.getAuthorName());
 
 				if (i != null) {
@@ -97,17 +73,31 @@ public class CommitsByMonth extends HtmlPage {
 					d.data.put(tmp.getAuthorName(), 1);
 				}
 			} else {
+				// We need to create a new month
 				Data d = new Data();
 				d.data.put(tmp.getAuthorName(), 1);
-				toRet.put(key, d);
+				monthToCommits.put(key, d);
 			}
 			index++;
 		}
 
-		return toRet;
-	}
+		List<String> months = new ArrayList<String>(monthToCommits.keySet());
+		Collections.sort(months);
 
-	private class Data {
-		public HashMap<String, Integer> data = new HashMap<String, Integer>();
+		// Generate our JSONArray
+		for (String date : months) {
+			Data current = monthToCommits.get(date);
+			JSONArray obj = new JSONArray();
+			obj.put(date);
+
+			for (int i = 1; i < names.length(); i++) {
+				String name = names.getString(i);
+				obj.put(current.data.get(name));
+			}
+
+			data.put(obj);
+		}
+
+		return data;
 	}
 }

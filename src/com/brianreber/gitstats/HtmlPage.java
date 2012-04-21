@@ -13,6 +13,8 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
+import org.json.JSONException;
+import org.w3c.dom.DOMException;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
@@ -28,7 +30,7 @@ public abstract class HtmlPage {
 		this.pageTitle = pageTitle;
 	}
 
-	protected abstract String generateBody(List<Commit> commits);
+	protected abstract String generateBody(List<Commit> commits) throws JSONException;
 
 	public void generatePage(List<Commit> commits) {
 		try {
@@ -94,6 +96,12 @@ public abstract class HtmlPage {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (ParserConfigurationException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (DOMException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (JSONException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
