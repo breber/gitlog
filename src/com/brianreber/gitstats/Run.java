@@ -30,7 +30,7 @@ public class Run {
 	private static String outputPath = "";
 	private static String projectName = "";
 
-	public static void main(String[] args) throws FileNotFoundException, JSONException, ParseException {
+	public static void main(String[] args) throws FileNotFoundException, ParseException, JSONException {
 		File f = new File(args[0]);
 		Scanner scan = new Scanner(f);
 
@@ -47,14 +47,38 @@ public class Run {
 		addPages();
 
 		while (scan.hasNextLine()) {
-			String temp = scan.nextLine();
-			temp = temp.replaceAll("\"message\":\"(.+?)?\"(.+?)\"(.+?)?\"", "\"message\":\"$1\\\\\"$2\\\\\"$3\"");
-			JSONObject obj = new JSONObject(temp);
+			String line = scan.nextLine();
 
-			Date d = new Date(obj.getString("date"));
+			// Fix some problems with the JSON encoding in the message
+			String message = line.replaceAll(".+?(\"message\":\"(.+?)?\"})", "$2");
+			String messageRep = message.replaceAll("\\\\", "\\\\\\\\");
+			messageRep = messageRep.replaceAll("\"", "\\\\\"");
 
-			Commit c = new Commit(obj.getString("commit"), d, obj.getString("authorName"), obj.getString("authorEmail"), obj.getString("message"));
-			commits.add(c);
+			// Fix some problems with the JSON encoding in the message
+			String author = line.replaceAll(".+?(\"authorName\":\"(.+?)\",).*", "$2");
+			String authorRep = author.replaceAll("\\\\", "\\\\\\\\");
+			authorRep = authorRep.replaceAll("\"", "\\\\\"");
+
+			line = line.replace(author, authorRep);
+			line = line.replace(message, messageRep);
+
+			//			System.out.println(line);
+
+			try {
+				JSONObject obj = new JSONObject(line);
+				Date d = new Date(obj.getString("date"));
+
+				Commit c = new Commit(obj.getString("commit"), d, obj.getString("authorName"), obj.getString("authorEmail"), obj.getString("message"));
+				commits.add(c);
+			} catch (JSONException ex) {
+				System.out.println("Error with: " + line);
+				System.out.println("Message:    " + message);
+				System.out.println("MessageRep: " + messageRep);
+				System.out.println("Author:    " + author);
+				System.out.println("AuthorRep: " + authorRep);
+				ex.printStackTrace();
+				throw ex;
+			}
 		}
 
 		System.out.println("Num Commits: " + commits.size());
