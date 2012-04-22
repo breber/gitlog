@@ -75,6 +75,7 @@ public class Run {
 	 * Add the pages we want to generate
 	 */
 	private static void addPages() {
+		pages.add(new IndexPage(projectName, outputPath));
 		pages.add(new CommitsByMonth(projectName, outputPath));
 		pages.add(new CommitsByDay(projectName, outputPath));
 		pages.add(new CommitsByDayAndHour(projectName, outputPath));
