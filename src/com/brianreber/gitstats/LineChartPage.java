@@ -37,7 +37,7 @@ public abstract class LineChartPage extends HtmlPage {
 		sb.append("function drawChart() {");
 
 		sb.append("var data = new google.visualization.arrayToDataTable(");
-		sb.append(data.toString(5));
+		sb.append(data.toString());
 		sb.append(");");
 
 		sb.append("var chart = new google.visualization.LineChart(document.getElementById('chart_div'));");

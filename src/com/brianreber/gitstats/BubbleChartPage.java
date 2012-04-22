@@ -22,7 +22,7 @@ public abstract class BubbleChartPage extends HtmlPage {
 		sb.append("function drawChart() {");
 
 		sb.append("var data = new google.visualization.arrayToDataTable(");
-		sb.append(data.toString(5));
+		sb.append(data.toString());
 		sb.append(");");
 
 		sb.append("var options = {");
