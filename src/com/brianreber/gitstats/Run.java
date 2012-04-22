@@ -1,6 +1,7 @@
 package com.brianreber.gitstats;
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Date;
@@ -38,6 +39,11 @@ public class Run {
 		for (int i = 1; i < args.length; i++) {
 			if (args[i].startsWith("--outPath=")) {
 				outputPath = args[i].substring("--outPath=".length());
+
+				File output = new File(outputPath);
+				if (!output.exists()) {
+					output.mkdir();
+				}
 			} else if (args[i].startsWith("--projectName=")) {
 				projectName = args[i].substring("--projectName=".length());
 			}
@@ -89,10 +95,32 @@ public class Run {
 			p.generatePage(commits, pages);
 		}
 
-		// Copy CSS and JS to output folder too
-		File css = new File("css");
+		// Copy CSS to output folder
+		File source = new File("css");
 		System.out.println("Copying CSS");
-		// TODO: actually copy folders
+		try {
+			FileUtil.copyFolder(source, new File(outputPath + "/css"));
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+
+		// Copy JS to output folder
+		source = new File("js");
+		System.out.println("Copying JS");
+		try {
+			FileUtil.copyFolder(source, new File(outputPath + "/js"));
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+
+		// Copy IMG to output folder too
+		source = new File("img");
+		System.out.println("Copying img");
+		try {
+			FileUtil.copyFolder(source, new File(outputPath + "/img"));
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 
 	/**

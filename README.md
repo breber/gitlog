@@ -34,16 +34,9 @@ the Eclipse project to a Runnable Jar).
 This will generate the HTML pages for the repository, and place them in the directory
 specified in the outPath parameter (the current directory if this parameter isn't specified).
 
-For now, you will have to manually copy the files for Twitter Bootstrap (the
-framework used to style the webpages) to the output directory. This will just include
-copying the img, js, and css directories from the root of this repository to the
-directory where the HTML is.
-
 Future Plans
 ------------
 
-*	Automate the copying of extra resources
-	*	Twitter Bootstrap files
 *	Automate the generating of the log file
 	*	Run the git log --pretty=format:.... command from the Java code
 	*	This means the user would give a path to the repository they want to use
