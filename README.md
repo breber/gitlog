@@ -50,3 +50,6 @@ Future Plans
 *	Add more graphs
 	*	Lines of code
 *	Clean up some of the current code generation
+*	Handle large repos better
+	*	Handle the case where there are over 10 or so committers. The graphs get
+	messy if there are more than about 10 elements
