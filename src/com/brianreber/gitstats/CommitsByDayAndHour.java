@@ -11,8 +11,14 @@ import org.json.JSONException;
 
 public class CommitsByDayAndHour extends BubbleChartPage {
 
-	public CommitsByDayAndHour(String projectTitle) {
-		super(projectTitle, "commitsdh.html", "Commits By Day and Hour");
+	/**
+	 * Creates a new CommitsByDayAndHour page with the given projectTitle
+	 * 
+	 * @param projectTitle the title of the project
+	 * @param outputPath the path to where we want to put the files
+	 */
+	public CommitsByDayAndHour(String projectTitle, String outputPath) {
+		super(projectTitle, outputPath + "/commitsdh.html", "Commits By Day and Hour");
 	}
 
 	private class Data {

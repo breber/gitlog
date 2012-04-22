@@ -10,17 +10,30 @@ import java.util.List;
 import org.json.JSONArray;
 import org.json.JSONException;
 
+/**
+ * A page containing the number of commits by month
+ * 
+ * @author breber
+ */
 public class CommitsByMonth extends LineChartPage {
 
-
-	public CommitsByMonth(String projectTitle) {
-		super(projectTitle, "commitsmonth.html", "Commits By Month");
+	/**
+	 * Creates a new CommitsByMonth page with the given projectTitle
+	 * 
+	 * @param projectTitle the title of the project
+	 * @param outputPath the path to where we want to put the files
+	 */
+	public CommitsByMonth(String projectTitle, String outputPath) {
+		super(projectTitle, outputPath + "/commitsmonth.html", "Commits By Month");
 	}
 
 	private class Data {
 		public HashMap<String, Integer> data = new HashMap<String, Integer>();
 	}
 
+	/* (non-Javadoc)
+	 * @see com.brianreber.gitstats.LineChartPage#parseData(java.util.List)
+	 */
 	@Override
 	protected JSONArray parseData(List<Commit> commits) throws JSONException {
 		JSONArray data = new JSONArray();

@@ -9,8 +9,14 @@ import org.json.JSONException;
 // TODO: by author as well
 public class CommitsByDay extends BarChartPage {
 
-	public CommitsByDay(String projectTitle) {
-		super(projectTitle, "commitsday.html", "Commits By Day");
+	/**
+	 * Creates a new CommitsByDay page with the given projectTitle
+	 * 
+	 * @param projectTitle the title of the project
+	 * @param outputPath the path to where we want to put the files
+	 */
+	public CommitsByDay(String projectTitle, String outputPath) {
+		super(projectTitle, outputPath + "/commitsday.html", "Commits By Day");
 	}
 
 	@Override

@@ -5,33 +5,64 @@ import java.util.List;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.Transformer;
-import javax.xml.transform.TransformerConfigurationException;
-import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
 import org.json.JSONException;
-import org.w3c.dom.DOMException;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
+/**
+ * The generic outline of a visualization page
+ * 
+ * @author breber
+ */
 public abstract class HtmlPage {
 
+	/**
+	 * The title of the project
+	 */
 	protected final String projectTitle;
+
+	/**
+	 * The title of the page
+	 */
 	protected final String pageTitle;
+
+	/**
+	 * The file to write the page to
+	 */
 	protected final String fileName;
 
+	/**
+	 * Creates a new HTMLPage with the given project title, file name, and page title
+	 * 
+	 * @param projectTitle the title of the project
+	 * @param fileName the file to write to
+	 * @param pageTitle the title of the page
+	 */
 	public HtmlPage(String projectTitle, String fileName, String pageTitle) {
 		this.fileName = fileName;
 		this.projectTitle = projectTitle;
 		this.pageTitle = pageTitle;
 	}
 
+	/**
+	 * Generates the content of the page, containing the visualization
+	 * 
+	 * @param commits the list of commits to use to generate the visualization
+	 * @return the string to put in for the body of the main JS block
+	 * @throws JSONException
+	 */
 	protected abstract String generateBody(List<Commit> commits) throws JSONException;
 
+	/**
+	 * Generates the HTML of the page and writes it to the file
+	 * 
+	 * @param commits the list of commits to use
+	 */
 	public void generatePage(List<Commit> commits) {
 		try {
 			DocumentBuilderFactory docFactory = DocumentBuilderFactory.newInstance();
@@ -90,20 +121,7 @@ public abstract class HtmlPage {
 			DOMSource source = new DOMSource(doc);
 			StreamResult result = new StreamResult(new File(fileName));
 			transformer.transform(source, result);
-		} catch (TransformerConfigurationException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (TransformerException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (ParserConfigurationException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (DOMException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (JSONException e) {
-			// TODO Auto-generated catch block
+		} catch (Exception e) {
 			e.printStackTrace();
 		}
 	}
