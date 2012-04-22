@@ -6,8 +6,8 @@ import java.util.List;
 import org.json.JSONArray;
 import org.json.JSONException;
 
+// TODO: by author as well
 public class CommitsByDay extends BarChartPage {
-
 
 	public CommitsByDay(String projectTitle) {
 		super(projectTitle, "commitsday.html", "Commits By Day");
@@ -19,15 +19,6 @@ public class CommitsByDay extends BarChartPage {
 		JSONArray names = new JSONArray();
 
 		int[] days = new int[8];
-		String[] dayTitles = new String[] {
-				"Sunday",
-				"Monday",
-				"Tuesday",
-				"Wednesday",
-				"Thursday",
-				"Friday",
-				"Saturday"
-		};
 
 		// Add the title of the axis to the array first
 		names.put("Day");
@@ -54,7 +45,7 @@ public class CommitsByDay extends BarChartPage {
 		// Generate our JSONArray
 		for (int i = 0; i < 7; i++) {
 			JSONArray obj = new JSONArray();
-			obj.put(dayTitles[i]);
+			obj.put(DateTime.DAY_TITLES[i]);
 			obj.put(days[i + 1]);
 
 			data.put(obj);

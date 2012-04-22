@@ -20,6 +20,7 @@ public class Run {
 	static {
 		pages.add(new CommitsByMonth("CardGames"));
 		pages.add(new CommitsByDay("CardGames"));
+		pages.add(new CommitsByDayAndHour("CardGames"));
 		// TODO: lines
 
 	}
