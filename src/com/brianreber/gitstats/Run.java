@@ -62,7 +62,7 @@ public class Run {
 		// Go through each page and generate it
 		for (HtmlPage p : pages) {
 			System.out.println("Generating page...");
-			p.generatePage(commits);
+			p.generatePage(commits, pages);
 		}
 
 		// Copy CSS and JS to output folder too
