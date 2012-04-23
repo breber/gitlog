@@ -54,18 +54,27 @@ public class Run {
 
 		while (scan.hasNextLine()) {
 			String line = scan.nextLine();
+			String originalLine = line;
 
 			// Fix some problems with the JSON encoding in the message
-			String message = line.replaceAll(".+?(\"message\":\"(.+?)?\"})", "$2");
+			String message = line.replaceAll(".+?(\"message\":\"((.+?)?)\"})", "$2");
 			String messageRep = message.replaceAll("\\\\", "\\\\\\\\");
 			messageRep = messageRep.replaceAll("\"", "\\\\\"");
 
-			// Fix some problems with the JSON encoding in the message
-			String author = line.replaceAll(".+?(\"authorName\":\"(.+?)\",).*", "$2");
+			// Fix some problems with the JSON encoding in the author name
+			String author = line.replaceAll(".+?(\"authorName\":(\".*?\"),\".+?\":).*", "$2");
+			author = author.substring(1, author.length() - 1);
 			String authorRep = author.replaceAll("\\\\", "\\\\\\\\");
 			authorRep = authorRep.replaceAll("\"", "\\\\\"");
 
+			// Fix some problems with the JSON encoding in the author email
+			String authorEmail = line.replaceAll(".+?(\"authorEmail\":(\".*?\"),\".+?\":).*", "$2");
+			authorEmail = authorEmail.substring(1, authorEmail.length() - 1);
+			String authorEmailRep = authorEmail.replaceAll("\\\\", "\\\\\\\\");
+			authorEmailRep = authorEmailRep.replaceAll("\"", "\\\\\"");
+
 			line = line.replace(author, authorRep);
+			line = line.replace(authorEmail, authorEmailRep);
 			line = line.replace(message, messageRep);
 
 			//			System.out.println(line);
@@ -77,11 +86,14 @@ public class Run {
 				Commit c = new Commit(obj.getString("commit"), d, obj.getString("authorName"), obj.getString("authorEmail"), obj.getString("message"));
 				commits.add(c);
 			} catch (JSONException ex) {
-				System.out.println("Error with: " + line);
+				System.out.println("Error with: " + originalLine);
+				System.out.println("New Value : " + line);
 				System.out.println("Message:    " + message);
 				System.out.println("MessageRep: " + messageRep);
-				System.out.println("Author:    " + author);
-				System.out.println("AuthorRep: " + authorRep);
+				System.out.println("Author:     " + author);
+				System.out.println("AuthorRep:  " + authorRep);
+				System.out.println("AuthorE:    " + authorEmail);
+				System.out.println("AuthorERep: " + authorEmailRep);
 				ex.printStackTrace();
 				throw ex;
 			}
